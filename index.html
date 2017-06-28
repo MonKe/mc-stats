@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>QCM Stats</title>
+  <link rel="stylesheet" href="qcm-stats.css" />
+</head>
+<body>
+  <h1 class="page__title">QCM Stats</h1>
+  <section class="page page--active archive">
+    <h1>Previous QCM</h1>
+    <form class="create">
+      <input name="create[title]" type="text" class="create__title" placeholder="My new QCM" required="required" />
+      <input name="create[url]" type="text" class="create__url" placeholder="http://qcm.com/my-qcm" />
+      <button class="create__submit">Start QCM</button>
+    </form>
+    <ul class="archive__list">
+      <li class="archive__item">
+        <a href="$url">$title</a>
+        $passed/$total questions ($score% success in $time)
+      </li>
+    </ul>
+  </section>
+  <section class="page active">
+    <h1 class="active__title">New QCM</h1>
+    <p>QCM can be found at <a href="#" class="active__url">#</a>.</p>
+    <h2>Question <span class="active__question">0</span></h2>
+    <button class="active__passed">Passed</button>
+    <button class="active__failed">Failed</button>
+    <button class="active__end">End QCM</button>
+  </section>
+  <script src="qcm-stats.js"></script>
+</body>
+</html>

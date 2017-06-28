@@ -1,0 +1,7 @@
+.page {
+  display: none;
+  margin: auto;
+}
+  .page--active {
+    display: block;
+  }
