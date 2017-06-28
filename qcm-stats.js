@@ -19,7 +19,7 @@ const
     }
   },
   // QCM
-  QCM = ({title, url, question, passed, failed, total, score, time}) => ({
+  QCM = ({title, url, question, passed, failed, total, score, seconds, time}) => ({
     title: title || '',
     url: url || '',
     question: question || 0,
@@ -27,7 +27,8 @@ const
     failed: failed || 0,
     total: total || 0,
     score: score || 100,
-    time: time || null,
+    seconds: seconds || 0,
+    time: time || '0s',
     start: e => {
       e.preventDefault()
       active.title = e.target['create[title]'].value
@@ -36,6 +37,7 @@ const
       localStorage.setItem('qcm-active', JSON.stringify(active))
       active.refresh()
       Page.goTo('active')
+      setInterval(active.addTime, 1000)
       console.log('qcm start', JSON.stringify(active))
     },
     end: e => {
@@ -55,6 +57,7 @@ const
       ui.activePassed.innerHTML = active.passed
       ui.activeFailed.innerHTML = active.failed
       ui.activeScore.innerHTML = active.score
+      ui.activeTime.innerHTML = active.time
     },
     addTo: count => () => {
       active.total = active.question
@@ -65,7 +68,12 @@ const
       localStorage.setItem('qcm-active', JSON.stringify(active))
     },
     updateScore: () =>
-      active.score = Math.round(active.passed / (active.question - 1) * 100)
+      active.score = Math.round(active.passed / (active.question - 1) * 100),
+    addTime: () => {
+      active.seconds++
+      active.time = active.seconds + 's'
+      active.refresh()
+    }
   }),
   // IO
   Component = ({selector, build, all, bind}) => {
@@ -121,6 +129,7 @@ let
     activePassed: {selector: '.active__passed'},
     activeFailed: {selector: '.active__failed'},
     activeScore: {selector: '.active__score'},
+    activeTime: {selector: '.active__time'},
     activePass: {selector: '.active__pass', bind: {click: active.addTo('passed')}},
     activeFail: {selector: '.active__fail', bind: {click: active.addTo('failed')}},
     activeEnd: {selector: '.active__end', bind: {click: active.end}}
@@ -128,9 +137,10 @@ let
 
 console.log(ui, archive, active)
 
-refresh()
-
 if (active.question) {
   active.refresh()
   Page.goTo('active')
+}
+else {
+  refresh()
 }
