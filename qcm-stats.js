@@ -26,7 +26,7 @@ const
     passed: passed || 0,
     failed: failed || 0,
     total: total || 0,
-    score: score || 0,
+    score: score || 100,
     time: time || null,
     start: e => {
       e.preventDefault()
@@ -52,7 +52,20 @@ const
       ui.activeTitle.innerHTML = active.title
       ui.activeURL.href = ui.activeURL.innerHTML = active.url
       ui.activeQuestion.innerHTML = active.question
-    }
+      ui.activePassed.innerHTML = active.passed
+      ui.activeFailed.innerHTML = active.failed
+      ui.activeScore.innerHTML = active.score
+    },
+    addTo: count => () => {
+      active.total = active.question
+      active[count]++
+      active.question++
+      active.updateScore()
+      active.refresh()
+      localStorage.setItem('qcm-active', JSON.stringify(active))
+    },
+    updateScore: () =>
+      active.score = Math.round(active.passed / (active.question - 1) * 100)
   }),
   // IO
   Component = ({selector, build, all, bind}) => {
@@ -105,6 +118,11 @@ let
     activeTitle: {selector: '.active__title'},
     activeURL: {selector: '.active__url'},
     activeQuestion: {selector: '.active__question'},
+    activePassed: {selector: '.active__passed'},
+    activeFailed: {selector: '.active__failed'},
+    activeScore: {selector: '.active__score'},
+    activePass: {selector: '.active__pass', bind: {click: active.addTo('passed')}},
+    activeFail: {selector: '.active__fail', bind: {click: active.addTo('failed')}},
     activeEnd: {selector: '.active__end', bind: {click: active.end}}
   })
 
