@@ -18,8 +18,8 @@ const
       document.querySelector(`.${name}`).classList.add('page--active')
     }
   },
-  // QCM
-  QCM = ({title, url, question, passed, failed, total, score, seconds, time}) => ({
+  // MC
+  MC = ({title, url, question, passed, failed, total, score, seconds, time}) => ({
     title: title || '',
     url: url || '',
     question: question || 0,
@@ -34,21 +34,21 @@ const
       active.title = e.target['create[title]'].value
       active.url = e.target['create[url]'].value
       active.question = 1
-      localStorage.setItem('qcm-active', JSON.stringify(active))
+      localStorage.setItem('mc-active', JSON.stringify(active))
       active.refresh()
       Page.goTo('active')
       setInterval(active.addTime, 1000)
-      console.log('qcm start', JSON.stringify(active))
+      console.log('mc start', JSON.stringify(active))
     },
     end: e => {
       e.preventDefault()
       archive.push(active)
-      localStorage.setItem('qcm-archive', JSON.stringify(archive))
-      localStorage.removeItem('qcm-active')
-      active = QCM({})
+      localStorage.setItem('mc-archive', JSON.stringify(archive))
+      localStorage.removeItem('mc-active')
+      active = MC({})
       refresh()
       Page.goTo('archive')
-      console.log('qcm end')
+      console.log('mc end')
     },
     refresh: () => {
       ui.activeTitle.innerHTML = active.title
@@ -65,7 +65,7 @@ const
       active.question++
       active.updateScore()
       active.refresh()
-      localStorage.setItem('qcm-active', JSON.stringify(active))
+      localStorage.setItem('mc-active', JSON.stringify(active))
     },
     updateScore: () =>
       active.score = Math.round(active.passed / (active.question - 1) * 100),
@@ -117,8 +117,8 @@ const
 // init
 
 let
-  archive = JSON.parse(localStorage.getItem('qcm-archive')) || [],
-  active = QCM(JSON.parse(localStorage.getItem('qcm-active')) || {}),
+  archive = JSON.parse(localStorage.getItem('mc-archive')) || [],
+  active = MC(JSON.parse(localStorage.getItem('mc-active')) || {}),
   ui = Interface({
     createForm: {selector: '.create', bind: {submit: active.start}},
     archiveList: {selector: '.archive__list'},
