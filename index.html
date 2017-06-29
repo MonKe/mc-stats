@@ -10,16 +10,18 @@
 <body>
   <h1 class="page__title">Multiple Choice Stats</h1>
   <section class="page page--active archive">
-    <h1>Previous Multiple Choice Test</h1>
     <form class="create">
       <input name="create[title]" type="text" class="create__title" placeholder="My multiple choice test" required="required" />
       <input name="create[url]" type="text" class="create__url" placeholder="http://my-reference.url" />
-      <button class="create__submit">Start Multiple Choice Test</button>
+      <button class="create__submit">Start test</button>
     </form>
+    <h1>Previous tests</h1>
     <ul class="archive__list">
       <li class="archive__item">
         <a href="$url">$title</a>
         $passed/$total questions ($score% success in $time)
+        <button class="archive__continue" data-id="$id">Continue</button>
+        <button class="archive__delete" data-id="$id">Delete</button>
       </li>
     </ul>
   </section>

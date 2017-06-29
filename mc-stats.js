@@ -29,26 +29,32 @@ const
     score: score || 100,
     seconds: seconds || 0,
     time: time || '0s',
-    start: e => {
+    interval: null,
+    init: e => {
       e.preventDefault()
       active.title = e.target['create[title]'].value
       active.url = e.target['create[url]'].value
-      active.question = 1
+      active.start()
+    },
+    start: () => {
+      active.question++
       localStorage.setItem('mc-active', JSON.stringify(active))
       active.refresh()
       Page.goTo('active')
-      setInterval(active.addTime, 1000)
-      console.log('mc start', JSON.stringify(active))
+      active.interval = setInterval(active.addTime, 1000)
+      //console.log('mc start', JSON.stringify(active))
     },
     end: e => {
       e.preventDefault()
+      active.id = archive.length
       archive.push(active)
       localStorage.setItem('mc-archive', JSON.stringify(archive))
       localStorage.removeItem('mc-active')
+      clearInterval(active.interval)
       active = MC({})
-      refresh()
+      Archive.refresh()
       Page.goTo('archive')
-      console.log('mc end')
+      //console.log('mc end')
     },
     refresh: () => {
       ui.activeTitle.innerHTML = active.title
@@ -73,8 +79,33 @@ const
       active.seconds++
       active.time = active.seconds + 's'
       active.refresh()
+      localStorage.setItem('mc-active', JSON.stringify(active))
     }
   }),
+  Archive = {
+    restore: e => {
+      let index = +e.target.dataset.id
+      active = MC(archive[index])
+      Archive.delete(e)
+      active.start()
+    },
+    delete: e => {
+      let index = +e.target.dataset.id
+      archive = [...archive.slice(0, index), ...archive.slice(index + 1)]
+      localStorage.setItem('mc-archive', JSON.stringify(archive))
+      Archive.refresh()
+    },
+    refresh: () => {
+      ui.archiveList.innerHTML = ''
+      archive.forEach(item =>
+        ui.archiveList.innerHTML += render(ui.archiveItem, item)
+      )
+      Interface({
+        archiveContinue: {selector: '.archive__continue', all: true, bind: {click: Archive.restore}},
+        archiveDelete: {selector: '.archive__delete', all: true, bind: {click: Archive.delete}},
+      })
+    }
+  },
   // IO
   Component = ({selector, build, all, bind}) => {
     switch (build) {
@@ -101,18 +132,12 @@ const
   render = (template, params) =>
     Object.keys(params)
       .reduce((template, key) =>
-        template.replace(`$${key}`, params[key]),
+        template.replace(new RegExp(`\\$${key}`, 'g'), params[key]),
         template
       ),
   bindEvents = (events, element) =>
     Object.keys(events)
-      .forEach(key => element.addEventListener(key, events[key])),
-  refresh = () => {
-    ui.archiveList.innerHTML = ''
-    archive.forEach(item =>
-      ui.archiveList.innerHTML += render(ui.archiveItem, item)
-    )
-  }
+      .forEach(key => element.addEventListener(key, events[key]))
 
 // init
 
@@ -120,7 +145,7 @@ let
   archive = JSON.parse(localStorage.getItem('mc-archive')) || [],
   active = MC(JSON.parse(localStorage.getItem('mc-active')) || {}),
   ui = Interface({
-    createForm: {selector: '.create', bind: {submit: active.start}},
+    createForm: {selector: '.create', bind: {submit: active.init}},
     archiveList: {selector: '.archive__list'},
     archiveItem: {selector: '.archive__item', build: 'template'},
     activeTitle: {selector: '.active__title'},
@@ -135,12 +160,11 @@ let
     activeEnd: {selector: '.active__end', bind: {click: active.end}}
   })
 
-console.log(ui, archive, active)
+//console.log(ui, archive, active)
 
 if (active.question) {
-  active.refresh()
-  Page.goTo('active')
+  active.start()
 }
 else {
-  refresh()
+  Archive.refresh()
 }
