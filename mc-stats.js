@@ -19,7 +19,7 @@ const
     }
   },
   // MC
-  MC = ({title, url, question, passed, failed, total, score, seconds, time}) => ({
+  MC = ({title, url, question, passed, failed, total, score, seconds, time, id}) => ({
     title: title || '',
     url: url || '',
     question: question || 0,
@@ -30,10 +30,13 @@ const
     seconds: seconds || 0,
     time: time || '0s',
     interval: null,
+    id: id || 0,
     init: e => {
       e.preventDefault()
       active.title = e.target['create[title]'].value
       active.url = e.target['create[url]'].value
+      active.id = +localStorage.getItem('mc-id') || 0
+      localStorage.setItem('mc-id', active.id + 1)
       active.start()
     },
     start: () => {
@@ -46,7 +49,6 @@ const
     },
     end: e => {
       e.preventDefault()
-      active.id = archive.length
       archive.push(active)
       localStorage.setItem('mc-archive', JSON.stringify(archive))
       localStorage.removeItem('mc-active')
@@ -77,21 +79,21 @@ const
       active.score = Math.round(active.passed / (active.question - 1) * 100),
     addTime: () => {
       active.seconds++
-      active.time = active.seconds + 's'
+      active.time = formatTime(active.seconds)
       active.refresh()
       localStorage.setItem('mc-active', JSON.stringify(active))
     }
   }),
   Archive = {
     restore: e => {
-      let index = +e.target.dataset.id
-      active = MC(archive[index])
+      let id = +e.target.dataset.id
+      active = MC(archive.find(item => item.id === id))
       Archive.delete(e)
       active.start()
     },
     delete: e => {
-      let index = +e.target.dataset.id
-      archive = [...archive.slice(0, index), ...archive.slice(index + 1)]
+      let id = +e.target.dataset.id
+      archive = archive.filter(item => item.id !== id)
       localStorage.setItem('mc-archive', JSON.stringify(archive))
       Archive.refresh()
     },
@@ -137,7 +139,12 @@ const
       ),
   bindEvents = (events, element) =>
     Object.keys(events)
-      .forEach(key => element.addEventListener(key, events[key]))
+      .forEach(key => element.addEventListener(key, events[key])),
+  formatTime = seconds => {
+    let minutes = Math.floor(seconds / 60), hours = Math.floor(minutes / 60),
+      s = seconds % 60, m = minutes % 60, h = hours // % 24 if counting days
+    return (h ? h + 'h' : '') + (m ? m + 'm' : '') + s + 's'
+  }
 
 // init
 
