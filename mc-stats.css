@@ -1,7 +1,54 @@
+body {
+  font: 12px/18px sans-serif;
+}
+
 .page {
   display: none;
   margin: auto;
 }
-  .page--active {
-    display: block;
+.page--active {
+  display: block;
+}
+  .page__title {
+    font-weight: normal;
+    line-height: 2em;
+    text-align: center;
+    text-transform: uppercase;
   }
+
+.create {
+  display: flex;
+  flex-direction: column;
+}
+
+.archive__list {
+  list-style: none;
+  padding: 0;
+}
+  .archive__item {
+    padding: 1em;
+  }
+  .archive__item + .archive__item {
+    border-top: 1px solid #000;
+  }
+
+.active__controls {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 360px) {
+  .page {
+    width: 340px;
+  }
+}
+
+@media (min-width: 500px) {
+  .page {
+    width: 500px;
+  }
+  .create, .active__controls {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}

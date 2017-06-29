@@ -18,10 +18,13 @@
     <h1>Previous tests</h1>
     <ul class="archive__list">
       <li class="archive__item">
-        <a href="$url">$title</a>
-        $passed/$total questions ($score% success in $time)
-        <button class="archive__continue" data-id="$id">Continue</button>
-        <button class="archive__delete" data-id="$id">Delete</button>
+        <a href="$url">$title</a> : you got
+        $passed out of $total questions right
+        ($score% success in $time)
+        <div class="archive__controls">
+          <button class="archive__continue" data-id="$id">Continue</button>
+          <button class="archive__delete" data-id="$id">Delete</button>
+        </div>
       </li>
     </ul>
   </section>
@@ -35,9 +38,11 @@
       <span class="active__score">100</span>% success in
       <span class="active__time">0s</span>)
     </h2>
-    <button class="active__pass">Passed</button>
-    <button class="active__fail">Failed</button>
-    <button class="active__end">End Multiple Choice Test</button>
+    <div class="active__controls">
+      <button class="active__pass">Passed</button>
+      <button class="active__fail">Failed</button>
+      <button class="active__end">End Multiple Choice Test</button>
+    </div>
   </section>
   <script src="mc-stats.js"></script>
 </body>
